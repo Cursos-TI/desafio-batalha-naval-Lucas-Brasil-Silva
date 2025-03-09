@@ -1,97 +1,76 @@
 #include <stdio.h>
 #include <string.h>
 
-#define TAM_CARACTERES 10
-#define TAM_NUMEROS 10
-#define LINHA_TABULEIRO 10
-#define COLUNA_TABULEIRO 10
+#define TABULEIRO_TAM 10
 #define TAM_NAVIO 3
 #define COLUNA_INDICE 2
 #define LINHA_INDICE 6
-#define NAVIO 3
+#define VALOR_NAVIO 3
 
-// Cria o tabuleiro somente com agua ou seja com 0.
-void criarTabuleiro(int tabuleiro[LINHA_TABULEIRO][COLUNA_TABULEIRO]) {
-    for (int i = 0; i < LINHA_TABULEIRO; i++)
-    {
-        for (int j = 0; j < COLUNA_TABULEIRO; j++)
-        {
+// Caracteres de colunas do tabuleiro (A-J)
+const char listaCaracteres[TABULEIRO_TAM] = {'A','B','C','D','E','F','G','H','I','J'};
+// Valores de linha do tabuleiro (1-10)
+char *listaNumeros[TABULEIRO_TAM] = {"1","2","3","4","5","6","7","8","9","10"};
+
+// Inicializa o tabuleiro com água (0).
+void criar_tabuleiro(int tabuleiro[TABULEIRO_TAM][TABULEIRO_TAM]) {
+    for (int i = 0; i < TABULEIRO_TAM; i++) {
+        for (int j = 0; j < TABULEIRO_TAM; j++) {
             tabuleiro[i][j] = 0;
         }
-        
     }
 }
 
-void exibirTabuleiro(int tabuleiro[LINHA_TABULEIRO][COLUNA_TABULEIRO]) {
-    for (int i = 0; i < LINHA_TABULEIRO; i++)
-    {
-        // imprimir na parte veritical os numeros de 1 à 10.
-        printf(i < LINHA_TABULEIRO - 1 ? "%d  " : "%d ", i + 1);
+// Exibe o tabuleiro formatado
+void exibir_tabuleiro(int tabuleiro[TABULEIRO_TAM][TABULEIRO_TAM]) {
+    printf("\n  ");
+    for (int i = 0; i < TABULEIRO_TAM; i++) {
+        printf(" %c", listaCaracteres[i]);
+    }
+    printf("\n");
 
-        for (int j = 0; j < COLUNA_TABULEIRO; j++)
-        {
+    for (int i = 0; i < TABULEIRO_TAM; i++) {
+        // printf(i < TABULEIRO_TAM - 1 ? "%d  " : "%d ", i + 1);
+        printf("%2d ", i + 1);
+        for (int j = 0; j < TABULEIRO_TAM; j++) {
             printf("%d ", tabuleiro[i][j]);
         }
         printf("\n");
     }
 }
 
-void margemHorizontal(char listaCaracteres[TAM_CARACTERES]) {
-    
-    printf("\n  ");
-    for (int i = 0; i < TAM_CARACTERES; i++)
-    {
-        printf(" %c", listaCaracteres[i]);
+// Posiciona os navios no tabuleiro
+void posicionar_navios(int tabuleiro[TABULEIRO_TAM][TABULEIRO_TAM],int indices[LINHA_INDICE][COLUNA_INDICE]) {
+    for (int i = 0; i < LINHA_INDICE; i++) {
+        tabuleiro[indices[i][1]][indices[i][0]] = VALOR_NAVIO;
     }
-    printf("\n");
 }
 
-void posicionarNavios(int tabuleiro[LINHA_TABULEIRO][COLUNA_TABULEIRO],int indices[LINHA_INDICE][COLUNA_INDICE]) {
-    for (int i = 0; i < LINHA_INDICE; i++)
-    {
-        int linha = indices[i][1];
-        int coluna = indices[i][0];
-
-        tabuleiro[linha][coluna] = NAVIO;
-    }
-    
+// converte coordenadas de texto (ex: "B7") para índices numéricos
+void converter_coordenadas(const char *coordenada, int *linha, int *coluna) {
+    *coluna = coordenada[0] - 'A';
+    *linha = (strcmp(&coordenada[1], "10") == 0) ? 9 : (coordenada[1] - '0') - 1;
 }
 
-// Função responsavel por identificar o indice das posições do navio no tabuleiro 
-void indiceNavios(char *navioVertical[], char *navioHorizontal[], char listaCaracteres[TAM_CARACTERES], int indices[LINHA_INDICE][COLUNA_INDICE]) { 
+// Armazena os índices das posições dos navios
+void indiceNavios(const char *navioVertical[], const char *navioHorizontal[], int indices[LINHA_INDICE][COLUNA_INDICE]) { 
 
     int contador = 0;
-
-    for (int i = 0; i < TAM_NAVIO; i++)
-    {
-        // Declaração de variáveis que estão recebenddo as posições do navio.
-        char letraVer = navioVertical[i][0];
-        char letraHor = navioHorizontal[i][0];
-
-        // Loop que identificar o indice das posições
-        for (int j = 0; j < TAM_CARACTERES; j++) {
-            // Verificar qual caracter foi inserido, quando encontar, adiciona na lista indice o indice do caracter e do número.
-            if (listaCaracteres[j] == letraVer) {
-                indices[contador][0] = j;
-                indices[contador][1] = strcmp(&navioVertical[i][1], "10") == 0 ? 9 : (navioVertical[i][1] - '0') - 1; 
-                contador++;
-            }
-            if (listaCaracteres[j] == letraHor) {
-                indices[contador][0] = j;
-                indices[contador][1] = strcmp(&navioHorizontal[i][1], "10") == 0 ? 9 : (navioHorizontal[i][1] - '0') - 1;
-                contador++;
-            }
-            
-        }
+    for (int i = 0; i < TAM_NAVIO; i++) {
+        converter_coordenadas(navioVertical[i], &indices[contador][1], &indices[contador][0]);
+        contador++;
         
+        converter_coordenadas(navioHorizontal[i], &indices[contador][1], &indices[contador][0]);
+        contador++;
     }
     
 }
 
-int verificarRepeticao(char *listaPosicoes[]) {
+// Verifica se há repetição em uma lista de coordenadas
+int verificar_repeticao(const char *lista_posicoes[]) {
     for (int i = 0; i < TAM_NAVIO; i++) {
         for (int j = i + 1; j < TAM_NAVIO; j++) {
-            if (strcmp(listaPosicoes[i], listaPosicoes[j]) == 0) {
+            if (strcmp(lista_posicoes[i], lista_posicoes[j]) == 0) {
                 return 1;
             }
         }
@@ -99,7 +78,8 @@ int verificarRepeticao(char *listaPosicoes[]) {
     return 0;
 }
 
-int listasSaoDiferentes(char *navioVertical[], char *navioHorizontal[]) {
+// Verifica se há sobreposição entre os navios
+int verificar_sobreposicao(const char *navioVertical[], const char *navioHorizontal[]) {
     for (int i = 0; i < TAM_NAVIO; i++) {
         for (int j = 0; j < TAM_NAVIO; j++) {
             if (strcmp(navioHorizontal[i], navioVertical[j]) == 0) {
@@ -110,19 +90,15 @@ int listasSaoDiferentes(char *navioVertical[], char *navioHorizontal[]) {
     return 0;
 }
 
-int posicaolimite(char *navioVertical[], char *navioHorizontal[], char listaCaracteres[TAM_CARACTERES], char *listaNumeros[TAM_NUMEROS]) {
-    
+// Verifica se as coordenadas estão dentro dos limites do tabuleiro
+int validar_limnites(const char *navioVertical[], const char *navioHorizontal[]) {
     int validacao = 0;
-    for (int i = 0; i < TAM_NAVIO; i++) {
-        // Declaração de variáveis que estão recebenddo as posições do navio.
-        char letraVer = navioVertical[i][0]; // sempre será um caracter
-        char letraHor = navioHorizontal[i][0];
-        
-        for (int j = 0; j < TAM_CARACTERES; j++) {
-            if (listaCaracteres[j] == letraHor) {
+    for (int i = 0; i < TAM_NAVIO; i++) {        
+        for (int j = 0; j < TABULEIRO_TAM; j++) {
+            if (listaCaracteres[j] == navioHorizontal[i][0]) {
                 validacao++;
             }
-            if (listaCaracteres[j] == letraVer) {
+            if (listaCaracteres[j] == navioVertical[i][0]) {
                 validacao++;
             }
             if (strcmp(&navioHorizontal[i][1], listaNumeros[j]) == 0) {
@@ -133,51 +109,45 @@ int posicaolimite(char *navioVertical[], char *navioHorizontal[], char listaCara
             }
         }
     }
+    return validacao == 12;
+}
+
+// Valida todas as regras antes de posicionar os navios
+int validar_entrada(const char *navioVertical[], const char *navioHorizontal[], int indices[LINHA_INDICE][COLUNA_INDICE]) {
     
-    if (validacao == 12) {
+    if (!verificar_sobreposicao(navioVertical, navioHorizontal) &&
+        !verificar_repeticao(navioHorizontal) &&
+        !verificar_repeticao(navioVertical) &&
+        validar_limnites(navioVertical, navioHorizontal)) {
+
+        indiceNavios(navioVertical,navioHorizontal,indices);
         return 1;
     } else {
+        printf("\nErro: Posições inválidas!\nCertifique-se de que os navios estão dentro do tabuleiro e não se sobrepõem.\n\n");
         return 0;
     }
 }
 
-int validarEntrada(char *navioVertical[], char *navioHorizontal[], char listaCaracteres[TAM_CARACTERES], char *listaNumeros[TAM_NUMEROS], int indices[LINHA_INDICE][COLUNA_INDICE]) {
-    
-    if (!listasSaoDiferentes(navioVertical, navioHorizontal) && !verificarRepeticao(navioHorizontal) && !verificarRepeticao(navioVertical) && posicaolimite(navioVertical, navioHorizontal, listaCaracteres, listaNumeros)) {
-    //    printf("\n Executando funcao!!\n");
-        indiceNavios( navioVertical,navioHorizontal, listaCaracteres, indices);
-        return 1;
-    } else {
-        printf("\nDigite posições validas!\nElas precisão estejam entre a linha 1 à 10, coluna A à J e náo podem se sobrepor.\n");
-        return 0;
-    }
-}
-
-
+// Função principal responsavel por gerencias o programa.
 int main() {
     
-    int tabuleiro[LINHA_TABULEIRO][COLUNA_TABULEIRO];
-    char listaCaracteres[TAM_CARACTERES] = {'A','B','C','D','E','F','G','H','I','J'};
-    char *listaNumeros[TAM_NUMEROS] = {"1","2","3","4","5","6","7","8","9","10"};
-    char *navioVertical[TAM_NAVIO] = {"E2","E3","E4"};
-    char *navioHorizontal[TAM_NAVIO] = {"B7","C7","D7"};
+    int tabuleiro[TABULEIRO_TAM][TABULEIRO_TAM];
+    const char *navioVertical[TAM_NAVIO] = {"E2","E3","E4"};
+    const char *navioHorizontal[TAM_NAVIO] = {"B7","C7","D7"};
     int indices[LINHA_INDICE][COLUNA_INDICE];
 
-    criarTabuleiro(tabuleiro);
+    criar_tabuleiro(tabuleiro);
     
-    margemHorizontal(listaCaracteres);
-    
-    exibirTabuleiro(tabuleiro);
+    exibir_tabuleiro(tabuleiro);
 
-    if (validarEntrada(navioVertical, navioHorizontal, listaCaracteres, listaNumeros, indices)) {
-        posicionarNavios(tabuleiro, indices);
-        margemHorizontal(listaCaracteres);
-        exibirTabuleiro(tabuleiro);
-
+    if (validar_entrada(navioVertical, navioHorizontal, indices)) {
+        posicionar_navios(tabuleiro, indices);
+        exibir_tabuleiro(tabuleiro);
     }
 
     return 0;
 }
+
    // Nível Aventureiro - Expansão do Tabuleiro e Posicionamento Diagonal
     // Sugestão: Expanda o tabuleiro para uma matriz 10x10.
     // Sugestão: Posicione quatro navios no tabuleiro, incluindo dois na diagonal.
