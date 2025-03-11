@@ -4,10 +4,14 @@
 #include <stdlib.h>  // Biblioteca que fornece funções para alocação dinâmica de menória, conversões de tipo (atoi) e funções utilitárias.
 
 #define TABULEIRO_TAM 10
-#define TAM_NAVIO 3
 #define COLUNA_INDICE 2
 #define LINHA_INDICE 12
+#define TAM_NAVIO 3
 #define VALOR_NAVIO 3
+#define VALOR_HABILIDADE 5
+#define LINHA_HABILIDADE 3
+#define COLUNA_HABILIDADE 5
+
 
 // Caracteres de colunas do tabuleiro (A-J)
 const char listaCaracteres[TABULEIRO_TAM] = {'A','B','C','D','E','F','G','H','I','J'};
@@ -154,19 +158,69 @@ int validar_entrada(const char *navio_horizontal[], const char *navio_vertical[]
     }
 }
 
+void posicionar_habilidade_cone(const char *posicao, int tabuleiro[TABULEIRO_TAM][TABULEIRO_TAM]) {
+
+    int coordenada_linha = atoi(&posicao[1]) - 2;
+    int coordenada_coluna = (posicao[0] - 'A') - 1;
+
+    for (int i = 0; i < LINHA_HABILIDADE; i++) {
+        for (int j = 0; j < COLUNA_HABILIDADE; j++) {
+            if ((i == 0 && j == 2) || (i == 1 && j > 0 && j < 4) || (i == 2)) {
+                tabuleiro[coordenada_linha + i][coordenada_coluna + j] = 5;
+            }
+        }
+    }
+    
+}
+
+void posicionar_habilidade_cruz(const char *posicao, int tabuleiro[TABULEIRO_TAM][TABULEIRO_TAM]) {
+
+    int coordenada_linha = atoi(&posicao[1]) - 2;
+    int coordenada_coluna = (posicao[0] - 'A') - 1;
+
+    for (int i = 0; i < LINHA_HABILIDADE; i++) {
+        for (int j = 0; j < COLUNA_HABILIDADE; j++) {
+            if ((i == 0 && j == 2) || (i == 1) || (i == 2 && j == 2)) {
+                tabuleiro[coordenada_linha + i][coordenada_coluna + j] = 5;
+            }
+        }
+    }
+}
+
+void posicionar_habilidade_octaedro(const char *posicao, int tabuleiro[TABULEIRO_TAM][TABULEIRO_TAM]) {
+
+    int coordenada_linha = atoi(&posicao[1]) - 2;
+    int coordenada_coluna = (posicao[0] - 'A') - 1;
+
+    for (int i = 0; i < LINHA_HABILIDADE; i++) {
+        for (int j = 0; j < COLUNA_HABILIDADE; j++) {
+            if ((i == 0 && j == 2) || (i == 1 && j > 0 && j < 4) || (i == 2 && j == 2)) {
+                tabuleiro[coordenada_linha + i][coordenada_coluna + j] = 5;
+            }
+        }
+    }
+}
+
 // Função principal responsavel por gerencias o programa.
 int main() {
     
-    int tabuleiro[TABULEIRO_TAM][TABULEIRO_TAM];
     const char *navio_vertical[TAM_NAVIO] = {"E2","E3","E4"};
     const char *navio_horizontal[TAM_NAVIO] = {"B7","C7","D7"};
     const char *primeiro_navio_diagonal[TAM_NAVIO] = {"F5","G6","H7"};
     const char *segundo_navio_diagonal[TAM_NAVIO] = {"I2","H3","G4"};
+    int tabuleiro[TABULEIRO_TAM][TABULEIRO_TAM];
     int indices[LINHA_INDICE][COLUNA_INDICE];
+    const char posicao_cone[] = "B2";
+    const char posicao_cruz[] = "C5";
+    const char posicao_octaedro[] = "G8";
 
     criar_tabuleiro(tabuleiro);
-    
-    exibir_tabuleiro(tabuleiro);
+
+    posicionar_habilidade_cone(posicao_cone, tabuleiro);
+
+    posicionar_habilidade_cruz(posicao_cruz, tabuleiro);
+
+    posicionar_habilidade_octaedro(posicao_octaedro, tabuleiro);
 
     if (validar_entrada(navio_vertical, navio_horizontal, primeiro_navio_diagonal, segundo_navio_diagonal, indices)) {
         posicionar_navios(tabuleiro, indices);
@@ -175,24 +229,3 @@ int main() {
 
     return 0;
 }
-
-    // Nível Mestre - Habilidades Especiais com Matrizes
-    // Sugestão: Crie matrizes para representar habilidades especiais como cone, cruz, e octaedro.
-    // Sugestão: Utilize estruturas de repetição aninhadas para preencher as áreas afetadas por essas habilidades no tabuleiro.
-    // Sugestão: Exiba o tabuleiro com as áreas afetadas, utilizando 0 para áreas não afetadas e 1 para áreas atingidas.
-
-    // Exemplos de exibição das habilidades:
-    // Exemplo para habilidade em cone:
-    // 0 0 1 0 0
-    // 0 1 1 1 0
-    // 1 1 1 1 1
-
-    // Exemplo para habilidade em octaedro:
-    // 0 0 1 0 0
-    // 0 1 1 1 0
-    // 0 0 1 0 0
-
-    // Exemplo para habilidade em cruz:
-    // 0 0 1 0 0
-    // 1 1 1 1 1
-    // 0 0 1 0 0
