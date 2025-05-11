@@ -162,14 +162,24 @@ void posicionar_habilidade_cone(const char *posicao, int tabuleiro[TABULEIRO_TAM
 
     int coordenada_linha = atoi(&posicao[1]) - 2;
     int coordenada_coluna = (posicao[0] - 'A') - 1;
+    int contador = 0;
 
     for (int i = 0; i < LINHA_HABILIDADE; i++) {
         for (int j = 0; j < COLUNA_HABILIDADE; j++) {
             if ((i == 0 && j == 2) || (i == 1 && j > 0 && j < 4) || (i == 2)) {
-                tabuleiro[coordenada_linha + i][coordenada_coluna + j] = 5;
+                if ((coordenada_linha + i >= 0 && coordenada_linha + i <= 9) && (coordenada_coluna + j >= 0 && coordenada_coluna + j <= 9)) {
+                    tabuleiro[coordenada_linha + i][coordenada_coluna + j] = 1;
+                } else {
+                    contador++;
+                }
             }
         }
     }
+
+    if (contador > 0) {
+        printf("\nHabilidade CONE está fora do tabuleiro, defina outro ponto inicial para a habilidade!\n");
+    }
+    
     
 }
 
@@ -177,13 +187,22 @@ void posicionar_habilidade_cruz(const char *posicao, int tabuleiro[TABULEIRO_TAM
 
     int coordenada_linha = atoi(&posicao[1]) - 2;
     int coordenada_coluna = (posicao[0] - 'A') - 1;
+    int contador = 0;
 
     for (int i = 0; i < LINHA_HABILIDADE; i++) {
         for (int j = 0; j < COLUNA_HABILIDADE; j++) {
             if ((i == 0 && j == 2) || (i == 1) || (i == 2 && j == 2)) {
-                tabuleiro[coordenada_linha + i][coordenada_coluna + j] = 5;
+                if ((coordenada_linha + i >= 0 && coordenada_linha + i <= 9) && (coordenada_coluna + j >= 0 && coordenada_coluna + j <= 9)) {
+                    tabuleiro[coordenada_linha + i][coordenada_coluna + j] = 1;
+                } else {
+                    contador++;
+                }
             }
         }
+    }
+
+    if (contador > 0) {
+        printf("\nHabilidade CRUZ está fora do tabuleiro, defina outro ponto inicial para a habilidade!\n");
     }
 }
 
@@ -191,13 +210,22 @@ void posicionar_habilidade_octaedro(const char *posicao, int tabuleiro[TABULEIRO
 
     int coordenada_linha = atoi(&posicao[1]) - 2;
     int coordenada_coluna = (posicao[0] - 'A') - 1;
+    int contador = 0;
 
     for (int i = 0; i < LINHA_HABILIDADE; i++) {
         for (int j = 0; j < COLUNA_HABILIDADE; j++) {
             if ((i == 0 && j == 2) || (i == 1 && j > 0 && j < 4) || (i == 2 && j == 2)) {
-                tabuleiro[coordenada_linha + i][coordenada_coluna + j] = 5;
+                if ((coordenada_linha + i >= 0 && coordenada_linha + i <= 9) && (coordenada_coluna + j >= 0 && coordenada_coluna + j <= 9)) {
+                    tabuleiro[coordenada_linha + i][coordenada_coluna + j] = 1;
+                } else {
+                    contador++;
+                }
             }
         }
+    }
+
+    if (contador > 0) {
+        printf("\nHabilidade OCTAEDRO está fora do tabuleiro, defina outro ponto inicial para a habilidade!\n");
     }
 }
 
@@ -210,9 +238,9 @@ int main() {
     const char *segundo_navio_diagonal[TAM_NAVIO] = {"I2","H3","G4"};
     int tabuleiro[TABULEIRO_TAM][TABULEIRO_TAM];
     int indices[LINHA_INDICE][COLUNA_INDICE];
-    const char posicao_cone[] = "B2";
-    const char posicao_cruz[] = "C5";
-    const char posicao_octaedro[] = "G8";
+    const char posicao_cone[] = "B10";
+    const char posicao_cruz[] = "H5";
+    const char posicao_octaedro[] = "I8";
 
     criar_tabuleiro(tabuleiro);
 
