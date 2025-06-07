@@ -158,6 +158,7 @@ int validar_entrada(const char *navio_horizontal[], const char *navio_vertical[]
     }
 }
 
+// Posiciona um cone no tabuleiro.
 void posicionar_habilidade_cone(const char *posicao, int tabuleiro[TABULEIRO_TAM][TABULEIRO_TAM]) {
 
     int coordenada_linha = atoi(&posicao[1]) - 2;
@@ -183,6 +184,7 @@ void posicionar_habilidade_cone(const char *posicao, int tabuleiro[TABULEIRO_TAM
     
 }
 
+// Posiciona um cruz no tabuleiro.
 void posicionar_habilidade_cruz(const char *posicao, int tabuleiro[TABULEIRO_TAM][TABULEIRO_TAM]) {
 
     int coordenada_linha = atoi(&posicao[1]) - 2;
@@ -206,6 +208,7 @@ void posicionar_habilidade_cruz(const char *posicao, int tabuleiro[TABULEIRO_TAM
     }
 }
 
+// Posiciona um octaedro no tabuleiro.
 void posicionar_habilidade_octaedro(const char *posicao, int tabuleiro[TABULEIRO_TAM][TABULEIRO_TAM]) {
 
     int coordenada_linha = atoi(&posicao[1]) - 2;
@@ -238,9 +241,9 @@ int main() {
     const char *segundo_navio_diagonal[TAM_NAVIO] = {"I2","H3","G4"};
     int tabuleiro[TABULEIRO_TAM][TABULEIRO_TAM];
     int indices[LINHA_INDICE][COLUNA_INDICE];
-    const char posicao_cone[] = "B10";
-    const char posicao_cruz[] = "H5";
-    const char posicao_octaedro[] = "I8";
+    const char posicao_cone[] = "B9";
+    const char posicao_cruz[] = "B3";
+    const char posicao_octaedro[] = "F8";
 
     criar_tabuleiro(tabuleiro);
 
